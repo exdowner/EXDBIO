@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xeno Scripts Hub</title>
+    <style>
+        /* Estilização Base - Tema Preto e Branco */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        /* Efeito de linhas animadas no fundo */
+        .background-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+            animation: pulseBg 8s infinite alternate;
+        }
+
+        @keyframes pulseBg {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-bottom: 2px solid #ffffff;
+            display: inline-block;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #888888;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* Painel Secreto (Inicia Oculto) */
+        #adminPanel {
+            background: #111111;
+            border: 1px solid #333333;
+            padding: 25px;
+            border-radius: 6px;
+            margin-bottom: 40px;
+            display: none; /* Controlado via JS */
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #adminPanel.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #adminPanel h2 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            border-left: 3px solid #ffffff;
+            padding-left: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            color: #aaaaaa;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #ffffff;
+            background: #222222;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .btn-postar {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-postar:hover {
+            background: #cccccc;
+            transform: scale(1.02);
+        }
+
+        /* Lista de Scripts */
+        .scripts-list h2 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            color: #888888;
+        }
+
+        .script-card {
+            background: #121212;
+            border: 1px solid #222222;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .script-card:hover {
+            border-color: #555555;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .script-card h3 {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .script-code-box {
+            background: #070707;
+            border: 1px solid #1a1a1a;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #00ff66; /* Um leve toque monocromático/hacker ou mude para #ffffff se quiser estritamente P&B */
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre;
+            margin-top: 10px;
+            max-height: 200px;
+        }
+
+        .btn-copy {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 1px solid #444444;
+            color: #aaaaaa;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        /* Animações Keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-glow"></div>
+
+    <div class="container">
+        <header>
+            <h1>Xeno Database</h1>
+            <p>Repositório Limpo e Otimizado</p>
+        </header>
+
+        <div id="adminPanel">
+            <h2>Criar Nova Postagem</h2>
+            <div class="form-group">
+                <label for="scriptTitle">Nome do Script / Função</label>
+                <input type="text" id="scriptTitle" placeholder="Ex: Fly Script Hub V2">
+            </div>
+            <div class="form-group">
+                <label for="scriptCode">Código Lua (Script)</label>
+                <textarea id="scriptCode" placeholder="Cole seu script completo aqui..."></textarea>
+            </div>
+            <button class="btn-postar" onclick="adicionarScript()">Publicar Script</button>
+        </div>
+
+        <div class="scripts-list">
+            <h2>Scripts Disponíveis</h2>
+            <div id="containerScripts">
+                <div class="script-card">
+                    <h3>Anti-AFK Automático</h3>
+                    <button class="btn-copy" onclick="copiarCodigo(this)">Copiar</button>
+                    <div class="script-code-box">local VirtualUser = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SISTEMA DA SEQUÊNCIA SECRETA DE TECLAS
+        // Senha configurada: "xeno"
+        const sequenciaSecreta = ['x', 'e', 'n', 'o'];
+        let indiceAtual = 0;
+
+        document.addEventListener('keydown', (e) => {
+            // Verifica se a tecla pressionada corresponde à próxima na sequência
+            if (e.key.toLowerCase() === sequenciaSecreta[indiceAtual]) {
+                indiceAtual++;
+                
+                // Se completou a sequência com sucesso
+                if (indiceAtual === sequenciaSecreta.length) {
+                    mostrarPainelAdmin();
+                    indiceAtual = 0; // Reseta para caso precise abrir de novo
+                }
+            } else {
+                indiceAtual = 0; // Errou a sequência, reinicia do zero
+            }
+        });
+
+        function mostrarPainelAdmin() {
+            const painel = document.getElementById('adminPanel');
+            painel.classList.add('show');
+            alert('Acesso administrativo concedido. Painel Liberado!');
+        }
+
+        // LÓGICA DE FUNCIONAMENTO DO SITE (POSTAR E COPIAR)
+        function adicionarScript() {
+            const tituloInput = document.getElementById('scriptTitle');
+            const codigoInput = document.getElementById('scriptCode');
+
+            if (tituloInput.value.trim() === "" || codigoInput.value.trim() === "") {
+                alert("Preencha todos os campos antes de postar!");
+                return;
+            }
+
+            // Cria dinamicamente a estrutura visual do novo script
+            const container = document.getElementById('containerScripts');
+            
+            const novoCard = document.createElement('div');
+            novoCard.className = 'script-card';
+            
+            const h3 = document.createElement('h3');
+            h3.textContent = tituloInput.value;
+            
+            const btnCopy = document.createElement('button');
+            btnCopy.className = 'btn-copy';
+            btnCopy.textContent = 'Copiar';
+            btnCopy.onclick = function() { copiarCodigo(this); };
+            
+            const codeBox = document.createElement('div');
+            codeBox.className = 'script-code-box';
+            codeBox.textContent = codigoInput.value;
+            
+            novoCard.appendChild(h3);
+            novoCard.appendChild(btnCopy);
+            novoCard.appendChild(codeBox);
+            
+            // Adiciona no topo da lista
+            container.insertBefore(novoCard, container.firstChild);
+            
+            // Limpa as caixas de digitação
+            tituloInput.value = "";
+            codigoInput.value = "";
+            
+            // Fecha o painel após postar
+            document.getElementById('adminPanel').classList.remove('show');
+        }
+
+        function copiarCodigo(botao) {
+            // Encontra a caixa de texto correspondente ao botão clicado
+            const card = botao.parentElement;
+            const codigo = card.querySelector('.script-code-box').textContent;
+            
+            navigator.clipboard.writeText(codigo).then(() => {
+                botao.textContent = 'Copiado!';
+                botao.style.background = '#ffffff';
+                botao.style.color = '#000000';
+                
+                setTimeout(() => {
+                    botao.textContent = 'Copiar';
+                    botao.style.background = 'transparent';
+                    botao.style.color = '#aaaaaa';
+                }, 2000);
+            }).catch(err => {
+                alert('Erro ao copiar script: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
