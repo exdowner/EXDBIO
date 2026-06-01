@@ -3,275 +3,534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Exiled Scripts | Oculto & Poderoso</title>
+    <title>EXDBIO | Exiled Scripts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* experiência mais "exclusiva" */
+            user-select: none;
         }
 
         body {
-            background: #0a0a0a;
-            font-family: 'Courier New', 'Fira Code', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Courier New', monospace;
             color: #e0e0e0;
-            padding: 20px;
+            padding: 0;
             transition: background 0.2s;
+            min-height: 100vh;
         }
 
-        /* TEMA PRETO E BRANCO (sem cores) */
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        /* cabeçalho sinistro */
+        /* HEADER */
         .header {
-            border-bottom: 1px solid #333;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #2c2c2c;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .logo h1 {
-            font-size: 2.2rem;
-            letter-spacing: -2px;
+            font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #fff, #aaa);
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff, #b0b0b0);
             background-clip: text;
             -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 5px rgba(255,255,255,0.2);
-        }
-        .logo p {
-            font-size: 0.75rem;
-            color: #777;
-            margin-top: 5px;
+            -webkit-text-fill-color: transparent;
         }
 
-        .stats {
-            background: #111;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.8rem;
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #1f1f1f;
+            border: 2px solid #5a5a5a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #aaa;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-box {
+            background: #0f0f0f;
             border: 1px solid #2c2c2c;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
         }
 
-        /* grade de scripts (cards) */
+        .stat-icon {
+            color: #7a7a7a;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            border-radius: 16px;
+            border: 1px dashed #2c2c2c;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            color: #3a3a3a;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .empty-state-text {
+            color: #5a5a5a;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* GRID */
         .scripts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
+            gap: 24px;
+            margin-top: 30px;
         }
 
         .card {
-            background: #0f0f0f;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
             border: 1px solid #262626;
-            border-radius: 20px;
+            border-radius: 12px;
             overflow: hidden;
-            transition: all 0.25s ease;
-            backdrop-filter: blur(2px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
+
         .card:hover {
             border-color: #5a5a5a;
-            transform: translateY(-4px);
-            box-shadow: 0 15px 25px rgba(0,0,0,0.6);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
         }
 
         .card-img {
             width: 100%;
-            height: 180px;
-            background: #1a1a1a;
+            height: 160px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid #2c2c2c;
             position: relative;
+            overflow: hidden;
         }
+
         .card-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s;
+            transition: transform 0.4s;
         }
-        .card-img .no-img {
+
+        .card:hover .card-img img {
+            transform: scale(1.05);
+        }
+
+        .card-no-img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
             color: #4f4f4f;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        }
+
+        .card-no-img i {
+            font-size: 32px;
+            opacity: 0.5;
         }
 
         .card-content {
-            padding: 18px;
+            padding: 20px;
         }
+
         .card-title {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.3rem;
+            font-weight: 600;
             margin-bottom: 12px;
             word-break: break-word;
-            border-left: 3px solid #aaa;
-            padding-left: 12px;
+            color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .card-title-icon {
+            color: #7a7a7a;
+            font-size: 16px;
+        }
+
         .code-snippet {
             background: #030303;
             padding: 12px;
-            border-radius: 14px;
-            font-family: monospace;
-            font-size: 0.8rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
             white-space: pre-wrap;
             word-break: break-all;
-            max-height: 120px;
+            max-height: 110px;
             overflow-y: auto;
             border: 1px solid #2a2a2a;
             margin: 12px 0;
+            color: #7a7a7a;
+            line-height: 1.4;
         }
+
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #1f1f1f;
         }
+
         .copy-btn {
             background: #1f1f1f;
             border: 1px solid #3a3a3a;
-            padding: 8px 16px;
-            border-radius: 40px;
+            padding: 8px 14px;
+            border-radius: 6px;
             color: #ddd;
-            font-family: monospace;
-            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
             font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+
         .copy-btn:hover {
             background: #2e2e2e;
-            border-color: #aaa;
+            border-color: #6a6a6a;
             color: white;
-            letter-spacing: 1px;
         }
+
+        .copy-btn i {
+            font-size: 12px;
+        }
+
         .timestamp {
             font-size: 0.7rem;
             color: #5e5e5e;
         }
 
-        /* MENU SECRETO DE POSTAGEM (só aparece com a sequência de teclas) */
+        /* SECRET OVERLAY */
         .secret-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.96);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(10px);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             visibility: hidden;
             opacity: 0;
-            transition: visibility 0.2s, opacity 0.2s;
+            transition: all 0.3s ease;
         }
+
         .secret-overlay.active {
             visibility: visible;
             opacity: 1;
         }
+
         .post-modal {
-            background: #0c0c0c;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
             width: 90%;
-            max-width: 550px;
-            border: 1px solid #444;
-            border-radius: 32px;
-            padding: 28px 24px;
-            box-shadow: 0 0 40px rgba(255,255,255,0.05);
+            max-width: 520px;
+            border: 1px solid #3a3a3a;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.08);
+            animation: slideIn 0.3s ease;
         }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .modal-header-icon {
+            font-size: 24px;
+            color: #7a7a7a;
+        }
+
         .post-modal h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f0f0f0;
+            letter-spacing: -0.5px;
         }
-        .post-modal input, .post-modal textarea, .post-modal input[type="file"] {
+
+        .modal-description {
+            font-size: 0.8rem;
+            color: #6a6a6a;
+            margin-bottom: 20px;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            color: #8a8a8a;
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .post-modal input,
+        .post-modal textarea,
+        .post-modal input[type="file"] {
             width: 100%;
             background: #141414;
             border: 1px solid #2c2c2c;
-            padding: 12px;
-            margin: 12px 0;
+            padding: 11px 14px;
             color: white;
-            border-radius: 20px;
-            font-family: monospace;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
             resize: vertical;
+            transition: all 0.2s;
         }
+
+        .post-modal input:focus,
+        .post-modal textarea:focus {
+            outline: none;
+            border-color: #6a6a6a;
+            background: #1a1a1a;
+            box-shadow: 0 0 12px rgba(106, 106, 106, 0.2);
+        }
+
+        .post-modal textarea {
+            min-height: 120px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 14px;
+            background: #141414;
+            border: 1px solid #2c2c2c;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #8a8a8a;
+            font-size: 0.9rem;
+        }
+
+        .file-input-label:hover {
+            border-color: #6a6a6a;
+            color: #aaa;
+        }
+
+        .file-input-label i {
+            font-size: 14px;
+        }
+
+        #postImage {
+            display: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
         .post-modal button {
-            background: #222;
+            flex: 1;
+            background: #1f1f1f;
             border: 1px solid #5a5a5a;
             padding: 12px;
-            width: 100%;
-            font-weight: bold;
-            font-family: monospace;
-            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
             cursor: pointer;
             color: white;
-            border-radius: 40px;
-            transition: 0.2s;
-            margin-top: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+
         .post-modal button:hover {
-            background: #333;
-            border-color: #ccc;
+            background: #2e2e2e;
+            border-color: #8a8a8a;
         }
+
+        .post-modal button i {
+            font-size: 14px;
+        }
+
+        #confirmPostBtn {
+            background: #2a2a2a;
+        }
+
+        #confirmPostBtn:hover {
+            background: #3a3a3a;
+        }
+
         .close-secret {
-            margin-top: 10px;
-            background: #1a1a1a !important;
+            background: #141414 !important;
             border-color: #3a3a3a !important;
         }
+
+        .close-secret:hover {
+            background: #1f1f1f !important;
+        }
+
         .secret-hint {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 16px;
             font-size: 0.7rem;
             color: #4a4a4a;
             border-top: 1px solid #222;
             padding-top: 12px;
         }
-        /* aviso sequência */
+
+        /* TOAST */
         .toast-msg {
             position: fixed;
             bottom: 25px;
             right: 25px;
-            background: #000000cc;
-            backdrop-filter: blur(8px);
-            border-left: 3px solid white;
-            padding: 12px 18px;
-            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 3px solid #7a7a7a;
+            padding: 14px 18px;
+            border-radius: 8px;
             font-size: 0.8rem;
             z-index: 1100;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             color: #eee;
             pointer-events: none;
-            transition: 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+            display: none;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
+        .toast-msg.show {
+            display: block;
         }
+
+        /* FOOTER */
         footer {
-            margin-top: 60px;
+            margin-top: 80px;
             text-align: center;
-            font-size: 0.7rem;
-            color: #2e2e2e;
-            border-top: 1px solid #181818;
-            padding-top: 20px;
+            font-size: 0.75rem;
+            color: #3e3e3e;
+            border-top: 1px solid #1a1a1a;
+            padding-top: 24px;
+            padding-bottom: 20px;
         }
-        @media (max-width: 700px) {
-            body { padding: 12px; }
-            .card-title { font-size: 1.2rem; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .header {
+                margin-bottom: 40px;
+            }
+
+            .logo h1 {
+                font-size: 1.6rem;
+            }
+
+            .scripts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .post-modal {
+                width: 95%;
+                padding: 24px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3a3a3a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5a;
         }
     </style>
 </head>
@@ -280,80 +539,122 @@
 <div class="container">
     <div class="header">
         <div class="logo">
-            <h1>EXILED SCRIPTS</h1>
-            <p>〣 oculto · só lenda sabe 〣</p>
+            <div class="logo-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <h1>EXDBIO</h1>
         </div>
-        <div class="stats">
-            <span>⚡ scripts ativos: <span id="scriptCount">0</span></span>
+        <div class="header-meta">
+            <div class="stat-box">
+                <i class="fas fa-fire stat-icon"></i>
+                <span>Scripts: <span class="stat-value" id="scriptCount">0</span></span>
+            </div>
         </div>
     </div>
 
     <div class="scripts-grid" id="scriptsGrid">
-        <!-- scripts serão carregados via JS -->
-        <div style="text-align: center; grid-column:1/-1; padding: 50px; color:#333;">carregando arsenal...</div>
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <div class="empty-state-text">
+                <p>Nenhum script publicado ainda.</p>
+                <p style="font-size: 0.85rem; margin-top: 8px; opacity: 0.6;">Use a sequência correta para acessar o painel de postagem.</p>
+            </div>
+        </div>
     </div>
+
     <footer>
-        EXILED // only those who know the sequence can ascend.
+        <p>EXDBIO &copy; 2025 | Only those who know the sequence can ascend.</p>
     </footer>
 </div>
 
-<!-- MODAL SECRETO PARA POSTAR (acessado por sequência de teclas) -->
+<!-- SECRET MODAL -->
 <div id="secretMenu" class="secret-overlay">
     <div class="post-modal">
-        <h2>⚡ POSTAR SCRIPT</h2>
-        <p style="font-size:0.8rem; color:#7a7a7a;">apenas você sabe o caminho.</p>
-        <input type="text" id="postTitle" placeholder="TÍTULO DO SCRIPT" autocomplete="off">
-        <textarea id="postScript" rows="5" placeholder="COLE O CÓDIGO / SCRIPT AQUI..."></textarea>
-        <input type="file" id="postImage" accept="image/*">
-        <button id="confirmPostBtn">➤ PUBLICAR NO EXILIO</button>
-        <button id="closeSecretBtn" class="close-secret">✖ FECHAR</button>
+        <div class="modal-header">
+            <i class="fas fa-lock-open modal-header-icon"></i>
+            <h2>Postar Script</h2>
+        </div>
+        <p class="modal-description">Apenas você sabe o caminho.</p>
+
+        <div class="form-group">
+            <label class="form-label">Título</label>
+            <input type="text" id="postTitle" placeholder="Nome do script" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Código</label>
+            <textarea id="postScript" placeholder="Cole o código aqui..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Imagem (Opcional)</label>
+            <label class="file-input-label">
+                <i class="fas fa-image"></i>
+                <span>Selecionar imagem</span>
+                <input type="file" id="postImage" accept="image/*">
+            </label>
+        </div>
+
+        <div class="modal-actions">
+            <button id="confirmPostBtn">
+                <i class="fas fa-check"></i>
+                Publicar
+            </button>
+            <button id="closeSecretBtn" class="close-secret">
+                <i class="fas fa-times"></i>
+                Fechar
+            </button>
+        </div>
+
         <div class="secret-hint">
-            sequência desativada após postar? não, sempre ativa.
+            sequência disponível a qualquer momento
         </div>
     </div>
 </div>
 
-<div id="toastMsg" class="toast-msg" style="display: none;"></div>
+<div id="toastMsg" class="toast-msg"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
 
 <script>
-    // ---------- SISTEMA DE ARMAZENAMENTO (localStorage) ----------
-    // Chave: "exiled_scripts_db"
-    let scripts = [];
+    // ============ FIREBASE CONFIG ============
+    const firebaseConfig = {
+        apiKey: "AIzaSyAIKPooiHzcB5d8_mRiDMyiam4AYel4lZs",
+        authDomain: "cs-low-poly.firebaseapp.com",
+        databaseURL: "https://cs-low-poly-default-rtdb.firebaseio.com",
+        projectId: "cs-low-poly",
+        storageBucket: "cs-low-poly.firebasestorage.app",
+        messagingSenderId: "291417778108",
+        appId: "1:291417778108:web:881869dd93735c6167edb9"
+    };
 
-    // Carregar scripts salvos
+    // Initialize Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // ============ SCRIPTS DATA ============
+    let scripts = [];
+    let isAuthed = false;
+
     function loadScriptsFromStorage() {
         const stored = localStorage.getItem("exiled_scripts_db");
-        if(stored) {
+        if (stored) {
             try {
                 scripts = JSON.parse(stored);
-                if(!Array.isArray(scripts)) scripts = [];
-            } catch(e) { scripts = []; }
+                if (!Array.isArray(scripts)) scripts = [];
+            } catch (e) {
+                scripts = [];
+            }
         } else {
-            // dados iniciais de exemplo (estilo foda)
-            scripts = [
-                {
-                    id: "1",
-                    title: "XENO INJECTOR",
-                    code: "loadstring(game:HttpGet('https://example.com/xeno'))()\n-- XENO CORE v2.0\n-- by exiled team",
-                    imageData: null,   // null = sem imagem
-                    timestamp: Date.now() - 86400000
-                },
-                {
-                    id: "2",
-                    title: "BLACK HUB V4",
-                    code: "--[[ BLACK EXILE ]]--\nlocal plr = game.Players.LocalPlayer\nplr.Character.Humanoid.WalkSpeed = 50\nprint('BLACKOUT ACTIVATED')",
-                    imageData: null,
-                    timestamp: Date.now() - 172800000
-                },
-                {
-                    id: "3",
-                    title: "INFINITE YIELD EXILED",
-                    code: "loadstring(game:HttpGet('https://raw.githubusercontent.com/Exiled/Script/main/IY.lua'))()\n-- COMANDOS LIBERADOS",
-                    imageData: null,
-                    timestamp: Date.now() - 345600000
-                }
-            ];
-            saveScriptsToStorage();
+            scripts = [];
         }
         updateCounter();
         renderScripts();
@@ -368,7 +669,6 @@
         document.getElementById("scriptCount").innerText = scripts.length;
     }
 
-    // converter imagem para base64 string
     function imageToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -378,18 +678,21 @@
         });
     }
 
-    // postar novo script (título, código, imagem)
     async function addNewScript(title, code, imageFile) {
-        if(!title.trim() || !code.trim()) {
-            showToast("ERRO: Título e script são obrigatórios.", 2000);
+        if (!title.trim() || !code.trim()) {
+            showToast("Título e script são obrigatórios.", 2000);
             return false;
         }
+
         let imageBase64 = null;
-        if(imageFile && imageFile.type.startsWith('image/')) {
+        if (imageFile && imageFile.type.startsWith('image/')) {
             try {
                 imageBase64 = await imageToBase64(imageFile);
-            } catch(e) { console.warn("erro imagem"); }
+            } catch (e) {
+                console.warn("erro ao processar imagem");
+            }
         }
+
         const newScript = {
             id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
             title: title.trim(),
@@ -397,74 +700,88 @@
             imageData: imageBase64,
             timestamp: Date.now()
         };
-        scripts.unshift(newScript); // mais recente no topo
+
+        scripts.unshift(newScript);
         saveScriptsToStorage();
         renderScripts();
-        showToast("✅ Script postado com sucesso (nível máximo de escuridão)", 2500);
+        showToast("Script publicado com sucesso", 2500);
         return true;
     }
 
-    // deletar script? (apenas por segurança, mas não tem UI explicita, pode implementar um duplo clique? mas vou por um icone invisivel? melhor deixar só postagem, mas se quiser remover? pra manter controle, vou adicionar uma função secreta de remover? Não precisa, mas quem tem acesso ao menu consegue administrar? vou por um pequeno X nos cards? mas estilo rscripts.net não tem remoção fácil, pra manter a imersão, apenas postagem. Caso queira remover só limpando o localStorage. Vou deixar sem delete pra não poluir, mas se quiser limpar dados: pressionar 'clear'? melhor nao. O foco é postar.
-    // Se quiser controle absoluto, quem sabe a sequência pode deletar? não incluso, mas caso queira: basta remover do storage manualmente. porém, pro usuário admin, posso adicionar um duplo clique nos cards? não vou complicar.
-    
     function renderScripts() {
         const grid = document.getElementById("scriptsGrid");
-        if(!scripts.length) {
-            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 60px 20px; background:#0b0b0b; border-radius:30px; border:1px dashed #2c2c2c;">
-                <span style="opacity:0.5;">⛔ Nenhum script exilado ainda... ⛔</span><br>
-                <span style="font-size:12px;">(a sequência correta revela o altar de postagem)</span>
-            </div>`;
+
+        if (!scripts.length) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <div class="empty-state-text">
+                        <p>Nenhum script publicado ainda.</p>
+                        <p style="font-size: 0.85rem; margin-top: 8px; opacity: 0.6;">Use a sequência correta para acessar o painel de postagem.</p>
+                    </div>
+                </div>
+            `;
             return;
         }
-        
+
         grid.innerHTML = "";
+
         scripts.forEach(script => {
             const card = document.createElement("div");
             card.className = "card";
-            
-            // parte da imagem
+
             const imgDiv = document.createElement("div");
             imgDiv.className = "card-img";
-            if(script.imageData && script.imageData.startsWith("data:image")) {
+
+            if (script.imageData && script.imageData.startsWith("data:image")) {
                 const img = document.createElement("img");
                 img.src = script.imageData;
-                img.alt = "preview";
+                img.alt = script.title;
                 imgDiv.appendChild(img);
             } else {
-                const noImgSpan = document.createElement("span");
-                noImgSpan.className = "no-img";
-                noImgSpan.innerText = "⚔️ SEM CAPA ⚔️";
-                imgDiv.appendChild(noImgSpan);
+                const noImg = document.createElement("div");
+                noImg.className = "card-no-img";
+                noImg.innerHTML = `
+                    <i class="fas fa-image"></i>
+                    <span>Sem imagem</span>
+                `;
+                imgDiv.appendChild(noImg);
             }
-            
-            // conteúdo
+
             const contentDiv = document.createElement("div");
             contentDiv.className = "card-content";
+
             const titleEl = document.createElement("div");
             titleEl.className = "card-title";
-            titleEl.innerText = script.title;
-            
+            titleEl.innerHTML = `
+                <i class="fas fa-file-code card-title-icon"></i>
+                <span>${script.title}</span>
+            `;
+
             const codeEl = document.createElement("div");
             codeEl.className = "code-snippet";
             codeEl.innerText = script.code.length > 300 ? script.code.slice(0, 300) + "..." : script.code;
-            
+
             const footer = document.createElement("div");
             footer.className = "card-footer";
+
             const copyBtn = document.createElement("button");
-            copyBtn.innerText = "📋 COPIAR SCRIPT";
             copyBtn.className = "copy-btn";
+            copyBtn.innerHTML = `<i class="fas fa-copy"></i> Copiar`;
             copyBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(script.code).then(() => {
-                    showToast(`📜 "${script.title}" copiado para área de transferência`, 1800);
-                }).catch(() => showToast("falha ao copiar", 1000));
+                    showToast(`"${script.title}" copiado para área de transferência`, 1800);
+                }).catch(() => showToast("Erro ao copiar", 1000));
             });
-            
+
             const timeSpan = document.createElement("span");
             timeSpan.className = "timestamp";
             const date = new Date(script.timestamp);
-            timeSpan.innerText = `postado ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
-            
+            timeSpan.innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
             footer.appendChild(copyBtn);
             footer.appendChild(timeSpan);
             contentDiv.appendChild(titleEl);
@@ -479,119 +796,76 @@
     function showToast(msg, duration = 2000) {
         const toast = document.getElementById("toastMsg");
         toast.innerText = msg;
-        toast.style.display = "block";
+        toast.classList.add("show");
         setTimeout(() => {
-            toast.style.opacity = "0";
-            setTimeout(() => {
-                toast.style.display = "none";
-                toast.style.opacity = "1";
-            }, 300);
+            toast.classList.remove("show");
         }, duration);
     }
 
-    // ---------- SEQUÊNCIA DE TECLAS PARA ABRIR MENU (Konami style, mas diferente) ----------
-    // sequência: CIMA, CIMA, BAIXO, BAIXO, ESQUERDA, DIREITA, ESQUERDA, DIREITA, B, A -> clássica? mas vou fazer algo único: "EXILED" em teclas: E X I L E D ou simplificada: "XENO". 
-    // Para algo mais difícil mas ao mesmo tempo reconhecível: sequência de letras: "X", "E", "N", "O" (tecla X, E, N, O). 
-    // Porém pode ser muito fácil. Vou adotar sequência: "X", "E", "N", "O", "S", "C" (XENOSC). Mas também vou deixar feedback visual.
-    // A sequência será armazenada em um vetor de códigos de tecla (keydown). Vou usar key: KeyX, KeyE, KeyN, KeyO, KeyS, KeyC.
-    // A ordem: X -> E -> N -> O -> S -> C . Após digitar corretamente, abre menu.
+    // ============ SECRET SEQUENCE ============
     let sequenceBuffer = [];
-    const secretCode = ["KeyX", "KeyE", "KeyN", "KeyO", "KeyS", "KeyC"]; // XENOSC
-    // também ignorar maiúsculas/minúsculas, mas KeyX captura X independente.
-    
+    const secretCode = ["KeyX", "KeyE", "KeyN", "KeyO", "KeyS", "KeyC"];
+
     function handleKeydown(e) {
-        const code = e.code;
-        // Adiciona ao buffer sequencialmente
-        sequenceBuffer.push(code);
-        // mantém tamanho máximo igual ao tamanho do código secreto
-        while(sequenceBuffer.length > secretCode.length) sequenceBuffer.shift();
-        
-        // Comparar
+        sequenceBuffer.push(e.code);
+        while (sequenceBuffer.length > secretCode.length) sequenceBuffer.shift();
+
         let match = true;
-        for(let i = 0; i < sequenceBuffer.length; i++) {
-            if(sequenceBuffer[i] !== secretCode[i]) {
+        for (let i = 0; i < sequenceBuffer.length; i++) {
+            if (sequenceBuffer[i] !== secretCode[i]) {
                 match = false;
                 break;
             }
         }
-        if(match && sequenceBuffer.length === secretCode.length) {
-            // sequência correta! abrir menu
+
+        if (match && sequenceBuffer.length === secretCode.length) {
             openSecretMenu();
-            // reset buffer pra não abrir várias vezes
             sequenceBuffer = [];
-            // feedback tátil
-            showToast("🔓 SEQUÊNCIA VÁLIDA · ACESSO CONCEDIDO", 2000);
+            showToast("Acesso Concedido", 2000);
             e.preventDefault();
         }
-        // feedback parcial (opcional - pode mostrar quantas teclas corretas? não, manter suspense)
-        // Se quiser um efeito sonoro imaginário: silêncio.
     }
-    
+
     function openSecretMenu() {
         const overlay = document.getElementById("secretMenu");
         overlay.classList.add("active");
-        // limpar campos
         document.getElementById("postTitle").value = "";
         document.getElementById("postScript").value = "";
         document.getElementById("postImage").value = "";
     }
-    
+
     function closeSecretMenu() {
         const overlay = document.getElementById("secretMenu");
         overlay.classList.remove("active");
     }
-    
-    // eventos do modal
+
+    // ============ INIT ============
     document.addEventListener("DOMContentLoaded", () => {
         loadScriptsFromStorage();
-        
-        // adiciona escuta das teclas
+
         window.addEventListener("keydown", handleKeydown);
-        
-        // botoes do modal
-        const confirmBtn = document.getElementById("confirmPostBtn");
-        const closeBtn = document.getElementById("closeSecretBtn");
-        const fileInput = document.getElementById("postImage");
-        
-        confirmBtn.addEventListener("click", async () => {
+
+        document.getElementById("confirmPostBtn").addEventListener("click", async () => {
             const title = document.getElementById("postTitle").value;
             const scriptCode = document.getElementById("postScript").value;
-            const file = fileInput.files[0];
+            const file = document.getElementById("postImage").files[0];
             const success = await addNewScript(title, scriptCode, file);
-            if(success) {
-                closeSecretMenu();
-                // reset file input
-                fileInput.value = "";
-            }
-        });
-        
-        closeBtn.addEventListener("click", () => {
-            closeSecretMenu();
-        });
-        
-        // clicar fora do modal fecha? sim, mas pra manter padrão interativo, clicar no overlay pode fechar
-        const overlayDiv = document.getElementById("secretMenu");
-        overlayDiv.addEventListener("click", (e) => {
-            if(e.target === overlayDiv) {
+            if (success) {
                 closeSecretMenu();
             }
         });
-        
-        // exibir dica inicial da sequência discreta: não mostrar texto escancarado, mas pode dar uma piscada no console
-        console.log("%cSEQUENCIA OCULTA: X E N O S C", "color: #5f5f5f; font-size: 12px;");
-        // dica no rodapé ou tooltip? Nada óbvio. O site fica clean.
-        
-        // botão de copiar script já incluso nos cards.
-        
-        // se quiser animação extra de carregamento
-        const stylePulse = document.createElement('style');
-        stylePulse.textContent = `@keyframes faintPulse { 0% {border-color:#333;} 100% {border-color:#6a6a6a;}} .card:hover .code-snippet { border-color: #5a5a5a; transition: 0.1s;}`;
-        document.head.appendChild(stylePulse);
+
+        document.getElementById("closeSecretBtn").addEventListener("click", closeSecretMenu);
+
+        document.getElementById("secretMenu").addEventListener("click", (e) => {
+            if (e.target.id === "secretMenu") {
+                closeSecretMenu();
+            }
+        });
+
+        console.log("%c🔐 SEQUÊNCIA OCULTA: X E N O S C", "color: #5a5a5a; font-size: 12px;");
     });
-    
-    // Atualização em tempo real quando adicionar via outras abas? não necessário, mas ao postar já rerenderiza.
-    // também se houver necessidade de remoção total, mas pra manter o controle, apenas postando.
-    // Adicionar um efeito "oscuro" nos cards para cópia
 </script>
+
 </body>
 </html>
