@@ -661,6 +661,8 @@
     const scriptsRef = database.ref('posts');
 
     let scripts = [];
+    let sequenceBuffer = [];
+    const secretCode = ["KeyX", "KeyE", "KeyN", "KeyO", "KeyS", "KeyC"];
 
     function loadScriptsFromFirebase() {
         scriptsRef.on('value', (snapshot) => {
@@ -820,16 +822,14 @@
         }, duration);
     }
 
-    let sequenceBuffer = [];
-    const secretCode = ["KeyX", "KeyE", "KeyN", "KeyO", "KeyS", "KeyC"];
-
     function handleKeydown(e) {
-        console.log("Tecla pressionada:", e.code);
+        const code = e.code;
+        console.log("Tecla:", code, "| Buffer:", sequenceBuffer.join(" -> "));
         
-        sequenceBuffer.push(e.code);
-        while (sequenceBuffer.length > secretCode.length) sequenceBuffer.shift();
-
-        console.log("Sequência atual:", sequenceBuffer.join(" -> "));
+        sequenceBuffer.push(code);
+        while (sequenceBuffer.length > secretCode.length) {
+            sequenceBuffer.shift();
+        }
 
         let match = true;
         for (let i = 0; i < sequenceBuffer.length; i++) {
@@ -839,8 +839,10 @@
             }
         }
 
+        console.log("Match:", match, "| Len:", sequenceBuffer.length, "| Target:", secretCode.length);
+
         if (match && sequenceBuffer.length === secretCode.length) {
-            console.log("✓ SEQUÊNCIA CORRETA DETECTADA!");
+            console.log("✓✓✓ SEQUÊNCIA COMPLETA! ABRINDO MODAL!");
             openSecretMenu();
             sequenceBuffer = [];
             showToast("Acesso Concedido", 2000);
@@ -849,7 +851,9 @@
     }
 
     function openSecretMenu() {
+        console.log("ABRINDO MODAL...");
         const overlay = document.getElementById("secretMenu");
+        console.log("Overlay:", overlay);
         overlay.classList.add("active");
         document.getElementById("postTitle").value = "";
         document.getElementById("postScript").value = "";
@@ -862,9 +866,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOM Carregado - Iniciando...");
         loadScriptsFromFirebase();
-
-        console.log("%c🔐 SEQUÊNCIA: XENOSC (X E N O S C)", "color: #7a7a7a; font-size: 12px;");
 
         window.addEventListener("keydown", handleKeydown);
 
@@ -885,8 +888,9 @@
                 closeSecretMenu();
             }
         });
+
+        console.log("%c✓ Sistema pronto! Digite: X E N O S C", "color: #7a7a7a; font-size: 12px;");
     });
 </script>
 
 </body>
-</html>
