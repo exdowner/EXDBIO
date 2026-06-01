@@ -1,365 +1,597 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xeno Scripts Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Exiled Scripts | Oculto & Poderoso</title>
     <style>
-        /* Estilização Base - Tema Preto e Branco */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none; /* experiência mais "exclusiva" */
         }
 
         body {
-            background-color: #0a0a0a;
-            color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding: 40px 20px;
+            background: #0a0a0a;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            color: #e0e0e0;
+            padding: 20px;
+            transition: background 0.2s;
         }
 
-        /* Efeito de linhas animadas no fundo */
-        .background-glow {
+        /* TEMA PRETO E BRANCO (sem cores) */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* cabeçalho sinistro */
+        .header {
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            letter-spacing: -2px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #aaa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(255,255,255,0.2);
+        }
+        .logo p {
+            font-size: 0.75rem;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .stats {
+            background: #111;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            border: 1px solid #2c2c2c;
+        }
+
+        /* grade de scripts (cards) */
+        .scripts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #0f0f0f;
+            border: 1px solid #262626;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.5);
+        }
+        .card:hover {
+            border-color: #5a5a5a;
+            transform: translateY(-4px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.6);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 180px;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid #222;
+            position: relative;
+        }
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .card-img .no-img {
+            color: #4f4f4f;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card-content {
+            padding: 18px;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            word-break: break-word;
+            border-left: 3px solid #aaa;
+            padding-left: 12px;
+        }
+        .code-snippet {
+            background: #030303;
+            padding: 12px;
+            border-radius: 14px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid #2a2a2a;
+            margin: 12px 0;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .copy-btn {
+            background: #1f1f1f;
+            border: 1px solid #3a3a3a;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: #ddd;
+            font-family: monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.75rem;
+        }
+        .copy-btn:hover {
+            background: #2e2e2e;
+            border-color: #aaa;
+            color: white;
+            letter-spacing: 1px;
+        }
+        .timestamp {
+            font-size: 0.7rem;
+            color: #5e5e5e;
+        }
+
+        /* MENU SECRETO DE POSTAGEM (só aparece com a sequência de teclas) */
+        .secret-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 20px 20px;
-            z-index: -1;
-            animation: pulseBg 8s infinite alternate;
+            background: rgba(0,0,0,0.96);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+        .secret-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .post-modal {
+            background: #0c0c0c;
+            width: 90%;
+            max-width: 550px;
+            border: 1px solid #444;
+            border-radius: 32px;
+            padding: 28px 24px;
+            box-shadow: 0 0 40px rgba(255,255,255,0.05);
+        }
+        .post-modal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        .post-modal input, .post-modal textarea, .post-modal input[type="file"] {
+            width: 100%;
+            background: #141414;
+            border: 1px solid #2c2c2c;
+            padding: 12px;
+            margin: 12px 0;
+            color: white;
+            border-radius: 20px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        .post-modal button {
+            background: #222;
+            border: 1px solid #5a5a5a;
+            padding: 12px;
+            width: 100%;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            color: white;
+            border-radius: 40px;
+            transition: 0.2s;
+            margin-top: 8px;
+        }
+        .post-modal button:hover {
+            background: #333;
+            border-color: #ccc;
+        }
+        .close-secret {
+            margin-top: 10px;
+            background: #1a1a1a !important;
+            border-color: #3a3a3a !important;
+        }
+        .secret-hint {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.7rem;
+            color: #4a4a4a;
+            border-top: 1px solid #222;
+            padding-top: 12px;
+        }
+        /* aviso sequência */
+        .toast-msg {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #000000cc;
+            backdrop-filter: blur(8px);
+            border-left: 3px solid white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            z-index: 1100;
+            font-family: monospace;
+            color: #eee;
+            pointer-events: none;
+            transition: 0.2s;
         }
 
-        @keyframes pulseBg {
-            0% { opacity: 0.5; }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
             100% { opacity: 1; }
         }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        header {
+        footer {
+            margin-top: 60px;
             text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 1s ease;
+            font-size: 0.7rem;
+            color: #2e2e2e;
+            border-top: 1px solid #181818;
+            padding-top: 20px;
         }
-
-        header h1 {
-            font-size: 2.5rem;
-            letter-spacing: 4px;
-            font-weight: 900;
-            text-transform: uppercase;
-            border-bottom: 2px solid #ffffff;
-            display: inline-block;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            color: #888888;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-        }
-
-        /* Painel Secreto (Inicia Oculto) */
-        #adminPanel {
-            background: #111111;
-            border: 1px solid #333333;
-            padding: 25px;
-            border-radius: 6px;
-            margin-bottom: 40px;
-            display: none; /* Controlado via JS */
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #adminPanel.show {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        #adminPanel h2 {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            color: #ffffff;
-            border-left: 3px solid #ffffff;
-            padding-left: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-            color: #aaaaaa;
-        }
-
-        input[type="text"], textarea {
-            width: 100%;
-            background: #1a1a1a;
-            border: 1px solid #333333;
-            padding: 12px;
-            color: #ffffff;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus, textarea:focus {
-            outline: none;
-            border-color: #ffffff;
-            background: #222222;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        .btn-postar {
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            padding: 12px 24px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-postar:hover {
-            background: #cccccc;
-            transform: scale(1.02);
-        }
-
-        /* Lista de Scripts */
-        .scripts-list h2 {
-            font-size: 1.4rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-            color: #888888;
-        }
-
-        .script-card {
-            background: #121212;
-            border: 1px solid #222222;
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            animation: fadeInUp 0.6s ease both;
-        }
-
-        .script-card:hover {
-            border-color: #555555;
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .script-card h3 {
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .script-code-box {
-            background: #070707;
-            border: 1px solid #1a1a1a;
-            padding: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.85rem;
-            color: #00ff66; /* Um leve toque monocromático/hacker ou mude para #ffffff se quiser estritamente P&B */
-            border-radius: 4px;
-            overflow-x: auto;
-            white-space: pre;
-            margin-top: 10px;
-            max-height: 200px;
-        }
-
-        .btn-copy {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: 1px solid #444444;
-            color: #aaaaaa;
-            padding: 6px 12px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-copy:hover {
-            background: #ffffff;
-            color: #000000;
-            border-color: #ffffff;
-        }
-
-        /* Animações Keyframes */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .card-title { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="background-glow"></div>
-
-    <div class="container">
-        <header>
-            <h1>Xeno Database</h1>
-            <p>Repositório Limpo e Otimizado</p>
-        </header>
-
-        <div id="adminPanel">
-            <h2>Criar Nova Postagem</h2>
-            <div class="form-group">
-                <label for="scriptTitle">Nome do Script / Função</label>
-                <input type="text" id="scriptTitle" placeholder="Ex: Fly Script Hub V2">
-            </div>
-            <div class="form-group">
-                <label for="scriptCode">Código Lua (Script)</label>
-                <textarea id="scriptCode" placeholder="Cole seu script completo aqui..."></textarea>
-            </div>
-            <button class="btn-postar" onclick="adicionarScript()">Publicar Script</button>
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <h1>EXILED SCRIPTS</h1>
+            <p>〣 oculto · só lenda sabe 〣</p>
         </div>
-
-        <div class="scripts-list">
-            <h2>Scripts Disponíveis</h2>
-            <div id="containerScripts">
-                <div class="script-card">
-                    <h3>Anti-AFK Automático</h3>
-                    <button class="btn-copy" onclick="copiarCodigo(this)">Copiar</button>
-                    <div class="script-code-box">local VirtualUser = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:Connect(function()
-    VirtualUser:CaptureController()
-    VirtualUser:ClickButton2(Vector2.new())
-end)</div>
-                </div>
-            </div>
+        <div class="stats">
+            <span>⚡ scripts ativos: <span id="scriptCount">0</span></span>
         </div>
     </div>
 
-    <script>
-        // SISTEMA DA SEQUÊNCIA SECRETA DE TECLAS
-        // Senha configurada: "xeno"
-        const sequenciaSecreta = ['x', 'e', 'n', 'o'];
-        let indiceAtual = 0;
+    <div class="scripts-grid" id="scriptsGrid">
+        <!-- scripts serão carregados via JS -->
+        <div style="text-align: center; grid-column:1/-1; padding: 50px; color:#333;">carregando arsenal...</div>
+    </div>
+    <footer>
+        EXILED // only those who know the sequence can ascend.
+    </footer>
+</div>
 
-        document.addEventListener('keydown', (e) => {
-            // Verifica se a tecla pressionada corresponde à próxima na sequência
-            if (e.key.toLowerCase() === sequenciaSecreta[indiceAtual]) {
-                indiceAtual++;
-                
-                // Se completou a sequência com sucesso
-                if (indiceAtual === sequenciaSecreta.length) {
-                    mostrarPainelAdmin();
-                    indiceAtual = 0; // Reseta para caso precise abrir de novo
+<!-- MODAL SECRETO PARA POSTAR (acessado por sequência de teclas) -->
+<div id="secretMenu" class="secret-overlay">
+    <div class="post-modal">
+        <h2>⚡ POSTAR SCRIPT</h2>
+        <p style="font-size:0.8rem; color:#7a7a7a;">apenas você sabe o caminho.</p>
+        <input type="text" id="postTitle" placeholder="TÍTULO DO SCRIPT" autocomplete="off">
+        <textarea id="postScript" rows="5" placeholder="COLE O CÓDIGO / SCRIPT AQUI..."></textarea>
+        <input type="file" id="postImage" accept="image/*">
+        <button id="confirmPostBtn">➤ PUBLICAR NO EXILIO</button>
+        <button id="closeSecretBtn" class="close-secret">✖ FECHAR</button>
+        <div class="secret-hint">
+            sequência desativada após postar? não, sempre ativa.
+        </div>
+    </div>
+</div>
+
+<div id="toastMsg" class="toast-msg" style="display: none;"></div>
+
+<script>
+    // ---------- SISTEMA DE ARMAZENAMENTO (localStorage) ----------
+    // Chave: "exiled_scripts_db"
+    let scripts = [];
+
+    // Carregar scripts salvos
+    function loadScriptsFromStorage() {
+        const stored = localStorage.getItem("exiled_scripts_db");
+        if(stored) {
+            try {
+                scripts = JSON.parse(stored);
+                if(!Array.isArray(scripts)) scripts = [];
+            } catch(e) { scripts = []; }
+        } else {
+            // dados iniciais de exemplo (estilo foda)
+            scripts = [
+                {
+                    id: "1",
+                    title: "XENO INJECTOR",
+                    code: "loadstring(game:HttpGet('https://example.com/xeno'))()\n-- XENO CORE v2.0\n-- by exiled team",
+                    imageData: null,   // null = sem imagem
+                    timestamp: Date.now() - 86400000
+                },
+                {
+                    id: "2",
+                    title: "BLACK HUB V4",
+                    code: "--[[ BLACK EXILE ]]--\nlocal plr = game.Players.LocalPlayer\nplr.Character.Humanoid.WalkSpeed = 50\nprint('BLACKOUT ACTIVATED')",
+                    imageData: null,
+                    timestamp: Date.now() - 172800000
+                },
+                {
+                    id: "3",
+                    title: "INFINITE YIELD EXILED",
+                    code: "loadstring(game:HttpGet('https://raw.githubusercontent.com/Exiled/Script/main/IY.lua'))()\n-- COMANDOS LIBERADOS",
+                    imageData: null,
+                    timestamp: Date.now() - 345600000
                 }
+            ];
+            saveScriptsToStorage();
+        }
+        updateCounter();
+        renderScripts();
+    }
+
+    function saveScriptsToStorage() {
+        localStorage.setItem("exiled_scripts_db", JSON.stringify(scripts));
+        updateCounter();
+    }
+
+    function updateCounter() {
+        document.getElementById("scriptCount").innerText = scripts.length;
+    }
+
+    // converter imagem para base64 string
+    function imageToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // postar novo script (título, código, imagem)
+    async function addNewScript(title, code, imageFile) {
+        if(!title.trim() || !code.trim()) {
+            showToast("ERRO: Título e script são obrigatórios.", 2000);
+            return false;
+        }
+        let imageBase64 = null;
+        if(imageFile && imageFile.type.startsWith('image/')) {
+            try {
+                imageBase64 = await imageToBase64(imageFile);
+            } catch(e) { console.warn("erro imagem"); }
+        }
+        const newScript = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            title: title.trim(),
+            code: code.trim(),
+            imageData: imageBase64,
+            timestamp: Date.now()
+        };
+        scripts.unshift(newScript); // mais recente no topo
+        saveScriptsToStorage();
+        renderScripts();
+        showToast("✅ Script postado com sucesso (nível máximo de escuridão)", 2500);
+        return true;
+    }
+
+    // deletar script? (apenas por segurança, mas não tem UI explicita, pode implementar um duplo clique? mas vou por um icone invisivel? melhor deixar só postagem, mas se quiser remover? pra manter controle, vou adicionar uma função secreta de remover? Não precisa, mas quem tem acesso ao menu consegue administrar? vou por um pequeno X nos cards? mas estilo rscripts.net não tem remoção fácil, pra manter a imersão, apenas postagem. Caso queira remover só limpando o localStorage. Vou deixar sem delete pra não poluir, mas se quiser limpar dados: pressionar 'clear'? melhor nao. O foco é postar.
+    // Se quiser controle absoluto, quem sabe a sequência pode deletar? não incluso, mas caso queira: basta remover do storage manualmente. porém, pro usuário admin, posso adicionar um duplo clique nos cards? não vou complicar.
+    
+    function renderScripts() {
+        const grid = document.getElementById("scriptsGrid");
+        if(!scripts.length) {
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding: 60px 20px; background:#0b0b0b; border-radius:30px; border:1px dashed #2c2c2c;">
+                <span style="opacity:0.5;">⛔ Nenhum script exilado ainda... ⛔</span><br>
+                <span style="font-size:12px;">(a sequência correta revela o altar de postagem)</span>
+            </div>`;
+            return;
+        }
+        
+        grid.innerHTML = "";
+        scripts.forEach(script => {
+            const card = document.createElement("div");
+            card.className = "card";
+            
+            // parte da imagem
+            const imgDiv = document.createElement("div");
+            imgDiv.className = "card-img";
+            if(script.imageData && script.imageData.startsWith("data:image")) {
+                const img = document.createElement("img");
+                img.src = script.imageData;
+                img.alt = "preview";
+                imgDiv.appendChild(img);
             } else {
-                indiceAtual = 0; // Errou a sequência, reinicia do zero
+                const noImgSpan = document.createElement("span");
+                noImgSpan.className = "no-img";
+                noImgSpan.innerText = "⚔️ SEM CAPA ⚔️";
+                imgDiv.appendChild(noImgSpan);
+            }
+            
+            // conteúdo
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "card-content";
+            const titleEl = document.createElement("div");
+            titleEl.className = "card-title";
+            titleEl.innerText = script.title;
+            
+            const codeEl = document.createElement("div");
+            codeEl.className = "code-snippet";
+            codeEl.innerText = script.code.length > 300 ? script.code.slice(0, 300) + "..." : script.code;
+            
+            const footer = document.createElement("div");
+            footer.className = "card-footer";
+            const copyBtn = document.createElement("button");
+            copyBtn.innerText = "📋 COPIAR SCRIPT";
+            copyBtn.className = "copy-btn";
+            copyBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(script.code).then(() => {
+                    showToast(`📜 "${script.title}" copiado para área de transferência`, 1800);
+                }).catch(() => showToast("falha ao copiar", 1000));
+            });
+            
+            const timeSpan = document.createElement("span");
+            timeSpan.className = "timestamp";
+            const date = new Date(script.timestamp);
+            timeSpan.innerText = `postado ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+            
+            footer.appendChild(copyBtn);
+            footer.appendChild(timeSpan);
+            contentDiv.appendChild(titleEl);
+            contentDiv.appendChild(codeEl);
+            contentDiv.appendChild(footer);
+            card.appendChild(imgDiv);
+            card.appendChild(contentDiv);
+            grid.appendChild(card);
+        });
+    }
+
+    function showToast(msg, duration = 2000) {
+        const toast = document.getElementById("toastMsg");
+        toast.innerText = msg;
+        toast.style.display = "block";
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => {
+                toast.style.display = "none";
+                toast.style.opacity = "1";
+            }, 300);
+        }, duration);
+    }
+
+    // ---------- SEQUÊNCIA DE TECLAS PARA ABRIR MENU (Konami style, mas diferente) ----------
+    // sequência: CIMA, CIMA, BAIXO, BAIXO, ESQUERDA, DIREITA, ESQUERDA, DIREITA, B, A -> clássica? mas vou fazer algo único: "EXILED" em teclas: E X I L E D ou simplificada: "XENO". 
+    // Para algo mais difícil mas ao mesmo tempo reconhecível: sequência de letras: "X", "E", "N", "O" (tecla X, E, N, O). 
+    // Porém pode ser muito fácil. Vou adotar sequência: "X", "E", "N", "O", "S", "C" (XENOSC). Mas também vou deixar feedback visual.
+    // A sequência será armazenada em um vetor de códigos de tecla (keydown). Vou usar key: KeyX, KeyE, KeyN, KeyO, KeyS, KeyC.
+    // A ordem: X -> E -> N -> O -> S -> C . Após digitar corretamente, abre menu.
+    let sequenceBuffer = [];
+    const secretCode = ["KeyX", "KeyE", "KeyN", "KeyO", "KeyS", "KeyC"]; // XENOSC
+    // também ignorar maiúsculas/minúsculas, mas KeyX captura X independente.
+    
+    function handleKeydown(e) {
+        const code = e.code;
+        // Adiciona ao buffer sequencialmente
+        sequenceBuffer.push(code);
+        // mantém tamanho máximo igual ao tamanho do código secreto
+        while(sequenceBuffer.length > secretCode.length) sequenceBuffer.shift();
+        
+        // Comparar
+        let match = true;
+        for(let i = 0; i < sequenceBuffer.length; i++) {
+            if(sequenceBuffer[i] !== secretCode[i]) {
+                match = false;
+                break;
+            }
+        }
+        if(match && sequenceBuffer.length === secretCode.length) {
+            // sequência correta! abrir menu
+            openSecretMenu();
+            // reset buffer pra não abrir várias vezes
+            sequenceBuffer = [];
+            // feedback tátil
+            showToast("🔓 SEQUÊNCIA VÁLIDA · ACESSO CONCEDIDO", 2000);
+            e.preventDefault();
+        }
+        // feedback parcial (opcional - pode mostrar quantas teclas corretas? não, manter suspense)
+        // Se quiser um efeito sonoro imaginário: silêncio.
+    }
+    
+    function openSecretMenu() {
+        const overlay = document.getElementById("secretMenu");
+        overlay.classList.add("active");
+        // limpar campos
+        document.getElementById("postTitle").value = "";
+        document.getElementById("postScript").value = "";
+        document.getElementById("postImage").value = "";
+    }
+    
+    function closeSecretMenu() {
+        const overlay = document.getElementById("secretMenu");
+        overlay.classList.remove("active");
+    }
+    
+    // eventos do modal
+    document.addEventListener("DOMContentLoaded", () => {
+        loadScriptsFromStorage();
+        
+        // adiciona escuta das teclas
+        window.addEventListener("keydown", handleKeydown);
+        
+        // botoes do modal
+        const confirmBtn = document.getElementById("confirmPostBtn");
+        const closeBtn = document.getElementById("closeSecretBtn");
+        const fileInput = document.getElementById("postImage");
+        
+        confirmBtn.addEventListener("click", async () => {
+            const title = document.getElementById("postTitle").value;
+            const scriptCode = document.getElementById("postScript").value;
+            const file = fileInput.files[0];
+            const success = await addNewScript(title, scriptCode, file);
+            if(success) {
+                closeSecretMenu();
+                // reset file input
+                fileInput.value = "";
             }
         });
-
-        function mostrarPainelAdmin() {
-            const painel = document.getElementById('adminPanel');
-            painel.classList.add('show');
-            alert('Acesso administrativo concedido. Painel Liberado!');
-        }
-
-        // LÓGICA DE FUNCIONAMENTO DO SITE (POSTAR E COPIAR)
-        function adicionarScript() {
-            const tituloInput = document.getElementById('scriptTitle');
-            const codigoInput = document.getElementById('scriptCode');
-
-            if (tituloInput.value.trim() === "" || codigoInput.value.trim() === "") {
-                alert("Preencha todos os campos antes de postar!");
-                return;
+        
+        closeBtn.addEventListener("click", () => {
+            closeSecretMenu();
+        });
+        
+        // clicar fora do modal fecha? sim, mas pra manter padrão interativo, clicar no overlay pode fechar
+        const overlayDiv = document.getElementById("secretMenu");
+        overlayDiv.addEventListener("click", (e) => {
+            if(e.target === overlayDiv) {
+                closeSecretMenu();
             }
-
-            // Cria dinamicamente a estrutura visual do novo script
-            const container = document.getElementById('containerScripts');
-            
-            const novoCard = document.createElement('div');
-            novoCard.className = 'script-card';
-            
-            const h3 = document.createElement('h3');
-            h3.textContent = tituloInput.value;
-            
-            const btnCopy = document.createElement('button');
-            btnCopy.className = 'btn-copy';
-            btnCopy.textContent = 'Copiar';
-            btnCopy.onclick = function() { copiarCodigo(this); };
-            
-            const codeBox = document.createElement('div');
-            codeBox.className = 'script-code-box';
-            codeBox.textContent = codigoInput.value;
-            
-            novoCard.appendChild(h3);
-            novoCard.appendChild(btnCopy);
-            novoCard.appendChild(codeBox);
-            
-            // Adiciona no topo da lista
-            container.insertBefore(novoCard, container.firstChild);
-            
-            // Limpa as caixas de digitação
-            tituloInput.value = "";
-            codigoInput.value = "";
-            
-            // Fecha o painel após postar
-            document.getElementById('adminPanel').classList.remove('show');
-        }
-
-        function copiarCodigo(botao) {
-            // Encontra a caixa de texto correspondente ao botão clicado
-            const card = botao.parentElement;
-            const codigo = card.querySelector('.script-code-box').textContent;
-            
-            navigator.clipboard.writeText(codigo).then(() => {
-                botao.textContent = 'Copiado!';
-                botao.style.background = '#ffffff';
-                botao.style.color = '#000000';
-                
-                setTimeout(() => {
-                    botao.textContent = 'Copiar';
-                    botao.style.background = 'transparent';
-                    botao.style.color = '#aaaaaa';
-                }, 2000);
-            }).catch(err => {
-                alert('Erro ao copiar script: ', err);
-            });
-        }
-    </script>
+        });
+        
+        // exibir dica inicial da sequência discreta: não mostrar texto escancarado, mas pode dar uma piscada no console
+        console.log("%cSEQUENCIA OCULTA: X E N O S C", "color: #5f5f5f; font-size: 12px;");
+        // dica no rodapé ou tooltip? Nada óbvio. O site fica clean.
+        
+        // botão de copiar script já incluso nos cards.
+        
+        // se quiser animação extra de carregamento
+        const stylePulse = document.createElement('style');
+        stylePulse.textContent = `@keyframes faintPulse { 0% {border-color:#333;} 100% {border-color:#6a6a6a;}} .card:hover .code-snippet { border-color: #5a5a5a; transition: 0.1s;}`;
+        document.head.appendChild(stylePulse);
+    });
+    
+    // Atualização em tempo real quando adicionar via outras abas? não necessário, mas ao postar já rerenderiza.
+    // também se houver necessidade de remoção total, mas pra manter o controle, apenas postando.
+    // Adicionar um efeito "oscuro" nos cards para cópia
+</script>
 </body>
 </html>
