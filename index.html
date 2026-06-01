@@ -137,12 +137,43 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            position: relative;
         }
 
         .card:hover {
             border-color: #5a5a5a;
             transform: translateY(-6px);
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #aaa;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+            font-size: 14px;
+            opacity: 0;
+        }
+
+        .card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff4444;
+            color: #ff6666;
         }
 
         .card-img {
@@ -513,6 +544,10 @@
                 width: 95%;
                 padding: 24px;
             }
+
+            .delete-btn {
+                opacity: 1 !important;
+            }
         }
 
         /* Scrollbar */
@@ -616,29 +651,46 @@
 
 <div id="toastMsg" class="toast-msg"></div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+
 <script>
+    // ============ FIREBASE CONFIG ============
+    const firebaseConfig = {
+        apiKey: "AIzaSyAIKPooiHzcB5d8_mRiDMyiam4AYel4lZs",
+        authDomain: "cs-low-poly.firebaseapp.com",
+        databaseURL: "https://cs-low-poly-default-rtdb.firebaseio.com",
+        projectId: "cs-low-poly",
+        storageBucket: "cs-low-poly.firebasestorage.app",
+        messagingSenderId: "291417778108",
+        appId: "1:291417778108:web:881869dd93735c6167edb9"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const scriptsRef = database.ref('posts');
+
     // ============ SCRIPTS DATA ============
     let scripts = [];
 
-    function loadScriptsFromStorage() {
-        const stored = localStorage.getItem("exiled_scripts_db");
-        if (stored) {
-            try {
-                scripts = JSON.parse(stored);
-                if (!Array.isArray(scripts)) scripts = [];
-            } catch (e) {
-                scripts = [];
-            }
-        } else {
+    function loadScriptsFromFirebase() {
+        scriptsRef.on('value', (snapshot) => {
             scripts = [];
-        }
-        updateCounter();
-        renderScripts();
-    }
-
-    function saveScriptsToStorage() {
-        localStorage.setItem("exiled_scripts_db", JSON.stringify(scripts));
-        updateCounter();
+            const data = snapshot.val();
+            if (data) {
+                Object.entries(data).forEach(([key, value]) => {
+                    scripts.push({
+                        firebaseId: key,
+                        ...value
+                    });
+                });
+                scripts.sort((a, b) => b.timestamp - a.timestamp);
+            }
+            updateCounter();
+            renderScripts();
+        });
     }
 
     function updateCounter() {
@@ -660,28 +712,42 @@
             return false;
         }
 
-        let imageBase64 = null;
+        let imageData = null;
         if (imageFile && imageFile.type.startsWith('image/')) {
             try {
-                imageBase64 = await imageToBase64(imageFile);
+                imageData = await imageToBase64(imageFile);
             } catch (e) {
                 console.warn("erro ao processar imagem");
             }
         }
 
         const newScript = {
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
             title: title.trim(),
             code: code.trim(),
-            imageData: imageBase64,
+            imageData: imageData || null,
             timestamp: Date.now()
         };
 
-        scripts.unshift(newScript);
-        saveScriptsToStorage();
-        renderScripts();
-        showToast("Script publicado com sucesso", 2500);
-        return true;
+        try {
+            await scriptsRef.push(newScript);
+            showToast("Script publicado com sucesso", 2500);
+            return true;
+        } catch (error) {
+            showToast("Erro ao publicar script", 2000);
+            console.error(error);
+            return false;
+        }
+    }
+
+    function deleteScript(firebaseId) {
+        if (!firebaseId) return;
+        
+        scriptsRef.child(firebaseId).remove().then(() => {
+            showToast("Script removido", 1500);
+        }).catch((error) => {
+            showToast("Erro ao remover script", 2000);
+            console.error(error);
+        });
     }
 
     function renderScripts() {
@@ -706,6 +772,16 @@
         scripts.forEach(script => {
             const card = document.createElement("div");
             card.className = "card";
+
+            // Delete button
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-btn";
+            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            deleteBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                deleteScript(script.firebaseId);
+            });
+            card.appendChild(deleteBtn);
 
             const imgDiv = document.createElement("div");
             imgDiv.className = "card-img";
@@ -816,7 +892,7 @@
 
     // ============ INIT ============
     document.addEventListener("DOMContentLoaded", () => {
-        loadScriptsFromStorage();
+        loadScriptsFromFirebase();
 
         window.addEventListener("keydown", handleKeydown);
 
