@@ -1,923 +1,320 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>EXILED SCRIPTS | Oculto & Poderoso</title>
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank - Portal do Cliente (Lab)</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Courier New', monospace;
-            color: #e0e0e0;
-            padding: 0;
-            transition: background 0.2s;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 50px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #2c2c2c;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #ffffff, #b0b0b0);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo-subtitle {
-            font-size: 0.7rem;
-            color: #777;
-            margin-top: 2px;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: #1f1f1f;
-            border: 2px solid #5a5a5a;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #aaa;
-        }
-
-        .header-meta {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .stat-box {
-            background: #0f0f0f;
-            border: 1px solid #2c2c2c;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #aaa;
-        }
-
-        .stat-icon {
-            color: #7a7a7a;
-            font-size: 14px;
-        }
-
-        .stat-value {
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-            border-radius: 16px;
-            border: 1px dashed #2c2c2c;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            color: #3a3a3a;
-            margin-bottom: 12px;
-            opacity: 0.6;
-        }
-
-        .empty-state-text {
-            color: #5a5a5a;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .scripts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 24px;
-            margin-top: 30px;
-        }
-
-        .card {
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-            border: 1px solid #262626;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            position: relative;
-        }
-
-        .card:hover {
-            border-color: #5a5a5a;
-            transform: translateY(-6px);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 36px;
-            height: 36px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #3a3a3a;
-            border-radius: 8px;
-            color: #aaa;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            z-index: 10;
-            font-size: 14px;
-            opacity: 0;
-        }
-
-        .delete-btn.admin-only {
-            opacity: 0 !important;
-            pointer-events: none;
-        }
-
-        .delete-btn.admin-only.admin-active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .card:hover .delete-btn.admin-only.admin-active {
-            opacity: 1;
-        }
-
-        .delete-btn:hover {
-            background: rgba(255, 0, 0, 0.3);
-            border-color: #ff4444;
-            color: #ff6666;
-        }
-
-        .card-img {
-            width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid #2c2c2c;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-        }
-
-        .card:hover .card-img img {
-            transform: scale(1.05);
-        }
-
-        .card-no-img {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 8px;
-            color: #4f4f4f;
-        }
-
-        .card-no-img i {
-            font-size: 32px;
-            opacity: 0.5;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            word-break: break-word;
-            color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-title-icon {
-            color: #7a7a7a;
-            font-size: 16px;
-        }
-
-        .code-snippet {
-            background: #030303;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 110px;
-            overflow-y: auto;
-            border: 1px solid #2a2a2a;
-            margin: 12px 0;
-            color: #7a7a7a;
-            line-height: 1.4;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-            padding-top: 12px;
-            border-top: 1px solid #1f1f1f;
-        }
-
-        .copy-btn {
-            background: #1f1f1f;
-            border: 1px solid #3a3a3a;
-            padding: 8px 14px;
-            border-radius: 6px;
-            color: #ddd;
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .copy-btn:hover {
-            background: #2e2e2e;
-            border-color: #6a6a6a;
-            color: white;
-        }
-
-        .copy-btn i {
-            font-size: 12px;
-        }
-
-        .timestamp {
-            font-size: 0.7rem;
-            color: #5e5e5e;
-        }
-
-        .secret-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.98);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .secret-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .post-modal {
-            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
-            width: 90%;
-            max-width: 520px;
-            border: 1px solid #3a3a3a;
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.08);
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
-        .modal-header-icon {
-            font-size: 24px;
-            color: #7a7a7a;
-        }
-
-        .post-modal h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #f0f0f0;
-            letter-spacing: -0.5px;
-        }
-
-        .modal-description {
-            font-size: 0.8rem;
-            color: #6a6a6a;
-            margin-bottom: 20px;
-            margin-top: 4px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            font-size: 0.8rem;
-            color: #8a8a8a;
-            margin-bottom: 6px;
-            display: block;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .post-modal input,
-        .post-modal textarea,
-        .post-modal input[type="file"] {
-            width: 100%;
-            background: #141414;
-            border: 1px solid #2c2c2c;
-            padding: 11px 14px;
-            color: white;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            resize: vertical;
-            transition: all 0.2s;
-        }
-
-        .post-modal input:focus,
-        .post-modal textarea:focus {
-            outline: none;
-            border-color: #6a6a6a;
-            background: #1a1a1a;
-            box-shadow: 0 0 12px rgba(106, 106, 106, 0.2);
-        }
-
-        .post-modal textarea {
-            min-height: 120px;
-        }
-
-        .file-input-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 11px 14px;
-            background: #141414;
-            border: 1px solid #2c2c2c;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #8a8a8a;
-            font-size: 0.9rem;
-        }
-
-        .file-input-label:hover {
-            border-color: #6a6a6a;
-            color: #aaa;
-        }
-
-        .file-input-label i {
-            font-size: 14px;
-        }
-
-        #postImage {
-            display: none;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .post-modal button {
-            flex: 1;
-            background: #1f1f1f;
-            border: 1px solid #5a5a5a;
-            padding: 12px;
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            cursor: pointer;
-            color: white;
-            border-radius: 8px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .post-modal button:hover {
-            background: #2e2e2e;
-            border-color: #8a8a8a;
-        }
-
-        .post-modal button i {
-            font-size: 14px;
-        }
-
-        #confirmPostBtn {
-            background: #2a2a2a;
-        }
-
-        #confirmPostBtn:hover {
-            background: #3a3a3a;
-        }
-
-        .close-secret {
-            background: #141414 !important;
-            border-color: #3a3a3a !important;
-        }
-
-        .close-secret:hover {
-            background: #1f1f1f !important;
-        }
-
-        .secret-hint {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 0.7rem;
-            color: #4a4a4a;
-            border-top: 1px solid #222;
-            padding-top: 12px;
-        }
-
-        .toast-msg {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            border-left: 3px solid #7a7a7a;
-            padding: 14px 18px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            z-index: 1100;
-            font-family: 'Courier New', monospace;
-            color: #eee;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-            display: none;
-        }
-
-        .toast-msg.show {
-            display: block;
-        }
-
-        footer {
-            margin-top: 80px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #3e3e3e;
-            border-top: 1px solid #1a1a1a;
-            padding-top: 24px;
-            padding-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 24px 16px;
-            }
-
-            .header {
-                margin-bottom: 40px;
-            }
-
-            .logo h1 {
-                font-size: 1.6rem;
-            }
-
-            .scripts-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .post-modal {
-                width: 95%;
-                padding: 24px;
-            }
-
-            .delete-btn.admin-only.admin-active {
-                opacity: 1 !important;
-            }
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #3a3a3a;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #5a5a5a;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; color: #333; }
+        .header { background: #1a73e8; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .nav a { color: white; margin-left: 20px; text-decoration: none; }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h2 { margin-bottom: 15px; color: #1a73e8; }
+        input, textarea, button, select { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; }
+        button { background: #1a73e8; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #1557b0; }
+        .error { color: #d93025; background: #fce8e6; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: none; }
+        .success { color: #137333; background: #e6f4ea; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: none; }
+        .comment { border-left: 4px solid #1a73e8; padding: 12px; margin: 10px 0; background: #f8f9fa; }
+        .user-info { background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
+        .hidden { display: none; }
+        #adminPanel { border: 2px dashed #d93025; }
+        footer { text-align: center; padding: 20px; color: #666; font-size: 13px; }
     </style>
 </head>
 <body>
-
-<div class="container">
     <div class="header">
-        <div class="logo">
-            <div class="logo-icon">
-                <i class="fas fa-code"></i>
-            </div>
-            <div>
-                <h1>EXILED SCRIPTS</h1>
-                <p class="logo-subtitle">〣 oculto · só lenda sabe 〣</p>
-            </div>
-        </div>
-        <div class="header-meta">
-            <div class="stat-box">
-                <i class="fas fa-fire stat-icon"></i>
-                <span>Scripts: <span class="stat-value" id="scriptCount">0</span></span>
-            </div>
+        <div class="logo">SecureBank™ Lab</div>
+        <div class="nav">
+            <a href="#" onclick="showSection('home')">Home</a>
+            <a href="#" onclick="showSection('search')">Busca</a>
+            <a href="#" onclick="showSection('comments')">Comentários</a>
+            <a href="#" onclick="showSection('transfer')">Transferência</a>
+            <a href="#" id="loginLink" onclick="showSection('login')">Login</a>
+            <a href="#" id="logoutLink" class="hidden" onclick="logout()">Sair</a>
         </div>
     </div>
 
-    <div class="scripts-grid" id="scriptsGrid">
-        <div class="empty-state">
-            <div class="empty-state-icon">
-                <i class="fas fa-inbox"></i>
-            </div>
-            <div class="empty-state-text">
-                <p>Nenhum script publicado.</p>
-            </div>
+    <div class="container">
+        <!-- HOME -->
+        <div id="home" class="card">
+            <h2>Bem-vindo ao SecureBank Lab</h2>
+            <p>Este é um ambiente de teste controlado com vulnerabilidades intencionais.</p>
+            <div class="user-info" id="welcomeMsg">Você não está logado.</div>
+            <p style="margin-top:15px;font-size:14px;color:#666;">
+                Dica: Tente explorar XSS, Open Redirect, IDOR, CSRF, etc.
+            </p>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="login" class="card hidden">
+            <h2>Login do Cliente</h2>
+            <div class="error" id="loginError"></div>
+            <form onsubmit="return doLogin(event)">
+                <label>Usuário</label>
+                <input type="text" id="username" placeholder="admin ou cliente" required>
+                <label>Senha</label>
+                <input type="password" id="password" placeholder="senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+            <p style="font-size:13px;color:#666;margin-top:10px;">
+                Credenciais de teste: <code>admin / admin123</code> ou <code>cliente / 123456</code>
+            </p>
+        </div>
+
+        <!-- SEARCH (Reflected XSS + DOM XSS) -->
+        <div id="search" class="card hidden">
+            <h2>Busca de Transações</h2>
+            <form onsubmit="return doSearch(event)">
+                <input type="text" id="searchInput" placeholder="Digite algo para buscar...">
+                <button type="submit">Buscar</button>
+            </form>
+            <div id="searchResults"></div>
+        </div>
+
+        <!-- COMMENTS (Stored XSS via localStorage) -->
+        <div id="comments" class="card hidden">
+            <h2>Comentários dos Clientes</h2>
+            <div id="commentsList"></div>
+            <hr style="margin:20px 0;">
+            <h3>Deixe seu comentário</h3>
+            <form onsubmit="return addComment(event)">
+                <input type="text" id="commentName" placeholder="Seu nome" required>
+                <textarea id="commentText" rows="3" placeholder="Seu comentário..." required></textarea>
+                <button type="submit">Publicar</button>
+            </form>
+        </div>
+
+        <!-- TRANSFER (CSRF + IDOR) -->
+        <div id="transfer" class="card hidden">
+            <h2>Transferência Rápida</h2>
+            <div class="error" id="transferError"></div>
+            <div class="success" id="transferSuccess"></div>
+            <form id="transferForm" onsubmit="return doTransfer(event)">
+                <label>Conta de Destino (ID)</label>
+                <input type="text" id="destAccount" placeholder="Ex: 1001, 1002, 1003..." required>
+                <label>Valor (R$)</label>
+                <input type="number" id="amount" min="1" step="0.01" required>
+                <button type="submit">Transferir</button>
+            </form>
+            <p style="font-size:13px;color:#666;margin-top:10px;">
+                Contas existentes: 1001 (João), 1002 (Maria), 1003 (Admin)
+            </p>
+        </div>
+
+        <!-- ADMIN PANEL (só aparece se logado como admin) -->
+        <div id="adminPanel" class="card hidden">
+            <h2 style="color:#d93025;">⚠ Painel Administrativo</h2>
+            <p>Área restrita. Aqui você veria dados sensíveis.</p>
+            <div id="adminData"></div>
         </div>
     </div>
 
     <footer>
-        <p>EXILED // only those who know the sequence can ascend.</p>
+        SecureBank Lab © 2025 — Ambiente controlado para fins educacionais<br>
+        <!-- Information Disclosure -->
+        <!-- Debug: version=1.0.3-beta | db_host=localhost | secret_key=sk_live_51Hx... -->
     </footer>
-</div>
 
-<div id="secretMenu" class="secret-overlay">
-    <div class="post-modal">
-        <div class="modal-header">
-            <i class="fas fa-lock-open modal-header-icon"></i>
-            <h2>Postar Script</h2>
-        </div>
-        <p class="modal-description">Apenas você sabe o caminho.</p>
-
-        <div class="form-group">
-            <label class="form-label">Título</label>
-            <input type="text" id="postTitle" placeholder="Nome do script" autocomplete="off">
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Código</label>
-            <textarea id="postScript" placeholder="Cole o código aqui..."></textarea>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Imagem (Opcional)</label>
-            <label class="file-input-label">
-                <i class="fas fa-image"></i>
-                <span>Selecionar imagem</span>
-                <input type="file" id="postImage" accept="image/*">
-            </label>
-        </div>
-
-        <div class="modal-actions">
-            <button id="confirmPostBtn">
-                <i class="fas fa-check"></i>
-                Publicar
-            </button>
-            <button id="closeSecretBtn" class="close-secret">
-                <i class="fas fa-times"></i>
-                Fechar
-            </button>
-        </div>
-
-        <div class="secret-hint">
-            sequência desativada após postar? não, sempre ativa.
-        </div>
-    </div>
-</div>
-
-<div id="toastMsg" class="toast-msg"></div>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAIKPooiHzcB5d8_mRiDMyiam4AYel4lZs",
-        authDomain: "cs-low-poly.firebaseapp.com",
-        databaseURL: "https://cs-low-poly-default-rtdb.firebaseio.com",
-        projectId: "cs-low-poly",
-        storageBucket: "cs-low-poly.firebasestorage.app",
-        messagingSenderId: "291417778108",
-        appId: "1:291417778108:web:881869dd93735c6167edb9"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const scriptsRef = db.ref('posts');
-
-    let scripts = [];
-    let sequenceBuffer = [];
-    let isAdmin = false;
-    const secretCode = ["KeyX", "KeyE", "KeyN", "KeyO", "KeyS", "KeyC"];
-
-    function loadScriptsFromFirebase() {
-        scriptsRef.on('value', (snapshot) => {
-            scripts = [];
-            const data = snapshot.val();
-            if (data) {
-                Object.entries(data).forEach(([key, value]) => {
-                    scripts.push({ firebaseId: key, ...value });
-                });
-                scripts.sort((a, b) => b.timestamp - a.timestamp);
-            }
-            updateCounter();
-            renderScripts();
-        });
-    }
-
-    function updateCounter() {
-        document.getElementById("scriptCount").innerText = scripts.length;
-    }
-
-    function imageToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    }
-
-    async function addNewScript(title, code, imageFile) {
-        if (!title.trim() || !code.trim()) {
-            showToast("Título e script são obrigatórios.", 2000);
-            return false;
-        }
-
-        let imageData = null;
-        if (imageFile && imageFile.type.startsWith('image/')) {
-            try {
-                imageData = await imageToBase64(imageFile);
-            } catch (e) {
-                console.warn("erro ao processar imagem");
-            }
-        }
-
-        const newScript = {
-            title: title.trim(),
-            code: code.trim(),
-            imageData: imageData || null,
-            timestamp: Date.now()
+    <script>
+        // ============ CREDENCIAIS HARDCODED (vulnerável) ============
+        const USERS = {
+            "admin": { password: "admin123", role: "admin", account: "1003", balance: 50000 },
+            "cliente": { password: "123456", role: "user", account: "1001", balance: 2500 }
         };
 
-        try {
-            await scriptsRef.push(newScript);
-            showToast("Script publicado com sucesso", 2500);
-            return true;
-        } catch (error) {
-            showToast("Erro ao publicar script", 2000);
-            console.error(error);
+        // Contas (IDOR)
+        const ACCOUNTS = {
+            "1001": { name: "João Silva", balance: 2500 },
+            "1002": { name: "Maria Oliveira", balance: 1800 },
+            "1003": { name: "Administrador", balance: 50000 }
+        };
+
+        let currentUser = null;
+
+        // ============ LOGIN FRACO ============
+        function doLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            const err = document.getElementById("loginError");
+
+            if (USERS[user] && USERS[user].password === pass) {
+                currentUser = { username: user, ...USERS[user] };
+                // Armazena senha em texto claro no localStorage (inseguro)
+                localStorage.setItem("session", JSON.stringify({ user, pass, role: currentUser.role }));
+                updateUI();
+                showSection("home");
+                err.style.display = "none";
+            } else {
+                err.textContent = "Usuário ou senha inválidos!";
+                err.style.display = "block";
+            }
             return false;
         }
-    }
 
-    function deleteScript(firebaseId) {
-        if (!firebaseId || !isAdmin) return;
-        scriptsRef.child(firebaseId).remove().then(() => {
-            showToast("Script removido", 1500);
-        }).catch((error) => {
-            showToast("Erro ao remover script", 2000);
-            console.error(error);
-        });
-    }
-
-    function renderScripts() {
-        const grid = document.getElementById("scriptsGrid");
-
-        if (!scripts.length) {
-            grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-inbox"></i></div><div class="empty-state-text"><p>Nenhum script publicado.</p></div></div>`;
-            return;
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem("session");
+            updateUI();
+            showSection("home");
         }
 
-        grid.innerHTML = "";
+        function updateUI() {
+            const welcome = document.getElementById("welcomeMsg");
+            const loginLink = document.getElementById("loginLink");
+            const logoutLink = document.getElementById("logoutLink");
+            const adminPanel = document.getElementById("adminPanel");
 
-        scripts.forEach(script => {
-            const card = document.createElement("div");
-            card.className = "card";
+            if (currentUser) {
+                welcome.innerHTML = `Logado como: <strong>${currentUser.username}</strong> (${currentUser.role}) | Conta: ${currentUser.account} | Saldo: R$ ${currentUser.balance.toFixed(2)}`;
+                loginLink.classList.add("hidden");
+                logoutLink.classList.remove("hidden");
 
-            const deleteBtn = document.createElement("button");
-            deleteBtn.className = "delete-btn admin-only";
-            if (isAdmin) deleteBtn.classList.add("admin-active");
-            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-            deleteBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                deleteScript(script.firebaseId);
-            });
-            card.appendChild(deleteBtn);
-
-            const imgDiv = document.createElement("div");
-            imgDiv.className = "card-img";
-
-            if (script.imageData && script.imageData.startsWith("data:image")) {
-                const img = document.createElement("img");
-                img.src = script.imageData;
-                img.alt = script.title;
-                imgDiv.appendChild(img);
+                if (currentUser.role === "admin") {
+                    adminPanel.classList.remove("hidden");
+                    document.getElementById("adminData").innerHTML = `
+                        <p><strong>Todos os usuários:</strong></p>
+                        <pre>${JSON.stringify(USERS, null, 2)}</pre>
+                        <p><strong>Todas as contas:</strong></p>
+                        <pre>${JSON.stringify(ACCOUNTS, null, 2)}</pre>
+                    `;
+                } else {
+                    adminPanel.classList.add("hidden");
+                }
             } else {
-                const noImg = document.createElement("div");
-                noImg.className = "card-no-img";
-                noImg.innerHTML = `<i class="fas fa-image"></i><span>Sem imagem</span>`;
-                imgDiv.appendChild(noImg);
+                welcome.textContent = "Você não está logado.";
+                loginLink.classList.remove("hidden");
+                logoutLink.classList.add("hidden");
+                adminPanel.classList.add("hidden");
+            }
+        }
+
+        // ============ REFLECTED + DOM XSS ============
+        function doSearch(e) {
+            e.preventDefault();
+            const q = document.getElementById("searchInput").value;
+            // Vulnerável: injeta diretamente no DOM sem sanitização
+            document.getElementById("searchResults").innerHTML = `
+                <h3>Resultados para: ${q}</h3>
+                <p>Nenhuma transação encontrada com o termo "<b>${q}</b>".</p>
+                <p>Sugestão: tente buscar por datas ou valores.</p>
+            `;
+            // Também atualiza a URL (facilita testes de reflected)
+            history.pushState({}, "", "?search=" + encodeURIComponent(q));
+            return false;
+        }
+
+        // Carrega query string na carga da página (reflected XSS via URL)
+        window.addEventListener("load", () => {
+            const params = new URLSearchParams(location.search);
+            if (params.has("search")) {
+                document.getElementById("searchInput").value = params.get("search");
+                doSearch({ preventDefault: () => {} });
+                showSection("search");
+            }
+            // Open Redirect via parâmetro
+            if (params.has("redirect")) {
+                // Vulnerável: redireciona para qualquer URL
+                location.href = params.get("redirect");
+            }
+            // Restaura sessão (insegura)
+            const sess = localStorage.getItem("session");
+            if (sess) {
+                try {
+                    const data = JSON.parse(sess);
+                    if (USERS[data.user] && USERS[data.user].password === data.pass) {
+                        currentUser = { username: data.user, ...USERS[data.user] };
+                        updateUI();
+                    }
+                } catch(e) {}
+            }
+            loadComments();
+        });
+
+        // ============ STORED XSS (localStorage) ============
+        function addComment(e) {
+            e.preventDefault();
+            const name = document.getElementById("commentName").value;
+            const text = document.getElementById("commentText").value;
+            let comments = JSON.parse(localStorage.getItem("comments") || "[]");
+            comments.push({ name, text, date: new Date().toLocaleString() });
+            localStorage.setItem("comments", JSON.stringify(comments));
+            document.getElementById("commentName").value = "";
+            document.getElementById("commentText").value = "";
+            loadComments();
+            return false;
+        }
+
+        function loadComments() {
+            const list = document.getElementById("commentsList");
+            let comments = JSON.parse(localStorage.getItem("comments") || "[]");
+            if (comments.length === 0) {
+                list.innerHTML = "<p>Nenhum comentário ainda.</p>";
+                return;
+            }
+            // Vulnerável: renderiza HTML sem escape
+            list.innerHTML = comments.map(c => `
+                <div class="comment">
+                    <strong>${c.name}</strong> <small>(${c.date})</small><br>
+                    ${c.text}
+                </div>
+            `).join("");
+        }
+
+        // ============ CSRF + IDOR ============
+        function doTransfer(e) {
+            e.preventDefault();
+            const dest = document.getElementById("destAccount").value;
+            const amount = parseFloat(document.getElementById("amount").value);
+            const err = document.getElementById("transferError");
+            const ok = document.getElementById("transferSuccess");
+
+            if (!currentUser) {
+                err.textContent = "Você precisa estar logado!";
+                err.style.display = "block";
+                ok.style.display = "none";
+                return false;
             }
 
-            const contentDiv = document.createElement("div");
-            contentDiv.className = "card-content";
+            // IDOR: não verifica se a conta de origem pertence ao usuário logado
+            // e permite transferir de qualquer conta se souber o ID
+            if (!ACCOUNTS[dest]) {
+                err.textContent = "Conta de destino inválida!";
+                err.style.display = "block";
+                ok.style.display = "none";
+                return false;
+            }
 
-            const titleEl = document.createElement("div");
-            titleEl.className = "card-title";
-            titleEl.innerHTML = `<i class="fas fa-file-code card-title-icon"></i><span>${script.title}</span>`;
+            // Simula transferência (sem CSRF token)
+            ACCOUNTS[dest].balance += amount;
+            if (currentUser.account === dest) {
+                currentUser.balance += amount;
+            } else if (ACCOUNTS[currentUser.account]) {
+                ACCOUNTS[currentUser.account].balance -= amount;
+                currentUser.balance -= amount;
+            }
 
-            const codeEl = document.createElement("div");
-            codeEl.className = "code-snippet";
-            codeEl.innerText = script.code.length > 300 ? script.code.slice(0, 300) + "..." : script.code;
+            ok.textContent = `Transferência de R$ ${amount.toFixed(2)} para ${ACCOUNTS[dest].name} (conta ${dest}) realizada com sucesso!`;
+            ok.style.display = "block";
+            err.style.display = "none";
+            updateUI();
+            return false;
+        }
 
-            const footer = document.createElement("div");
-            footer.className = "card-footer";
-
-            const copyBtn = document.createElement("button");
-            copyBtn.className = "copy-btn";
-            copyBtn.innerHTML = `<i class="fas fa-copy"></i> Copiar`;
-            copyBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                navigator.clipboard.writeText(script.code).then(() => {
-                    showToast(`"${script.title}" copiado para área de transferência`, 1800);
-                }).catch(() => showToast("Erro ao copiar", 1000));
+        // Navegação
+        function showSection(id) {
+            ["home","login","search","comments","transfer"].forEach(s => {
+                document.getElementById(s).classList.add("hidden");
             });
-
-            const timeSpan = document.createElement("span");
-            timeSpan.className = "timestamp";
-            const date = new Date(script.timestamp);
-            timeSpan.innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-
-            footer.appendChild(copyBtn);
-            footer.appendChild(timeSpan);
-            contentDiv.appendChild(titleEl);
-            contentDiv.appendChild(codeEl);
-            contentDiv.appendChild(footer);
-            card.appendChild(imgDiv);
-            card.appendChild(contentDiv);
-            grid.appendChild(card);
-        });
-    }
-
-    function showToast(msg, duration = 2000) {
-        const toast = document.getElementById("toastMsg");
-        toast.innerText = msg;
-        toast.classList.add("show");
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, duration);
-    }
-
-    function handleKeydown(e) {
-        const code = e.code;
-        
-        sequenceBuffer.push(code);
-        while (sequenceBuffer.length > secretCode.length) {
-            sequenceBuffer.shift();
+            document.getElementById(id).classList.remove("hidden");
         }
 
-        let match = true;
-        for (let i = 0; i < sequenceBuffer.length; i++) {
-            if (sequenceBuffer[i] !== secretCode[i]) {
-                match = false;
-                break;
-            }
-        }
-
-        if (match && sequenceBuffer.length === secretCode.length) {
-            isAdmin = true;
-            openSecretMenu();
-            sequenceBuffer = [];
-            showToast("Acesso Concedido", 2000);
-            updateDeleteButtons();
-        }
-    }
-
-    function updateDeleteButtons() {
-        const deleteBtns = document.querySelectorAll(".delete-btn.admin-only");
-        deleteBtns.forEach(btn => {
-            if (isAdmin) {
-                btn.classList.add("admin-active");
-            } else {
-                btn.classList.remove("admin-active");
-            }
-        });
-    }
-
-    function openSecretMenu() {
-        const overlay = document.getElementById("secretMenu");
-        overlay.classList.add("active");
-        document.getElementById("postTitle").value = "";
-        document.getElementById("postScript").value = "";
-        document.getElementById("postImage").value = "";
-        document.getElementById("postTitle").focus();
-    }
-
-    function closeSecretMenu() {
-        const overlay = document.getElementById("secretMenu");
-        overlay.classList.remove("active");
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        loadScriptsFromFirebase();
-
-        window.addEventListener("keydown", handleKeydown);
-
-        document.getElementById("confirmPostBtn").addEventListener("click", async () => {
-            const title = document.getElementById("postTitle").value;
-            const scriptCode = document.getElementById("postScript").value;
-            const file = document.getElementById("postImage").files[0];
-            const success = await addNewScript(title, scriptCode, file);
-            if (success) {
-                closeSecretMenu();
-            }
-        });
-
-        document.getElementById("closeSecretBtn").addEventListener("click", closeSecretMenu);
-
-        document.getElementById("secretMenu").addEventListener("click", (e) => {
-            if (e.target.id === "secretMenu") {
-                closeSecretMenu();
-            }
-        });
-
-        console.log("%c🔐 DIGITE: XENOSC", "color: #7a7a7a; font-size: 14px; font-weight: bold;");
-    });
-</script>
-
+        // Inicial
+        showSection("home");
+    </script>
 </body>
+</html>
